@@ -11,7 +11,6 @@ import java.lang.management.ThreadMXBean;
  */
 public class Main {
 
-
     public static void main(String[] args) {
 
         //Used to time the process
@@ -26,12 +25,10 @@ public class Main {
 
         //Read input for filters if present (if there are not 4 input arguments, input is ignored)
         if (Arrays.asList(args).contains("-f")){ //Only if filters are active
-            
+
             if (Arrays.asList(args).contains("-c")){
                 filterColoring = true;
             }
-
-            System.out.println(Arrays.toString(args));
 
             for (String arg: args) {
                 if (arg.equals("-f")) {
@@ -40,7 +37,6 @@ public class Main {
                 if (arg.equals("-c")) {
                     break; //If -c is found, we are done with the filters
                 }
-                System.out.println(arg);
                 String[] splitFilter = arg.split("-");
                 filtersList.add(new Tuple<>(Integer.parseInt(splitFilter[0]), Integer.parseInt(splitFilter[1])));
             }
@@ -171,21 +167,21 @@ public class Main {
         System.err.println("Total time : " + duration /1000000000.0 + " sec");
         System.err.println("Amount of graphs: " + amountOfGraphs);
 
-        System.out.printf("max degree: \t");
+        System.err.printf("max degree: \t");
 
         for (int i = 0; i <= table.get(0).size() - 1; i++){
-            System.out.printf(i + "\t");
+            System.err.printf(i + "\t");
         }
 
-        System.out.printf("\n");
+        System.err.printf("\n");
 
         for (int i = 1; i < table.size() + 1; i++){
             //Index of list we are looking at is i - 2, this list has the values for inj = 1
-            System.out.printf("inj = " + i + ":\t");
+            System.err.printf("inj = " + i + ":\t");
             for (int j : table.get(i - 1)){
-                System.out.printf(j + "\t");
+                System.err.printf(j + "\t");
             }
-            System.out.println();
+            System.err.println();
         }
     }
 
@@ -194,22 +190,24 @@ public class Main {
      */
     private static void printFilteredGraphs(HashMap<Tuple<Integer, Integer>, List<Tuple<String, BTA>>> printedResults,  boolean filterColoring){
         if (!printedResults.isEmpty()){
-            System.out.println("--------------------");
+            System.err.println("--------------------");
         }
         for (Tuple<Integer, Integer> filter : printedResults.keySet()){
             if (filterColoring) {
-                System.out.println("Filter: max degree = " + filter.x + ", inj = " + filter.y);
+                System.err.println("Filter: max degree = " + filter.x + ", inj = " + filter.y);
                 for (Tuple<String, BTA> result : printedResults.get(filter)){
-                    System.out.println(result.x + "\t" + Arrays.toString(result.y.getFinalColoring()));
+                    System.out.printf(result.x);
+                    System.err.printf("\t" + Arrays.toString(result.y.getFinalColoring()));
+                    System.err.println();
                 }
-                System.out.println("--------------------");
+                System.err.println("--------------------");
             }
             else {
-                System.out.println("Filter: max degree = " + filter.x + ", inj = " + filter.y);
+                System.err.println("Filter: max degree = " + filter.x + ", inj = " + filter.y);
                 for (Tuple<String, BTA> result : printedResults.get(filter)) {
                     System.out.println(result.x);
                 }
-                System.out.println("--------------------");
+                System.err.println("--------------------");
             }
         }
     }
