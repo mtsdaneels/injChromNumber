@@ -6,8 +6,6 @@ This respository contains an algorithm to calculate the injective chromatic numb
 
 This requires a working shell. On Windows an easy way to simulate this is by using Windows Subsystem for Linux (WSL).
 
-The repository contains 2 .jar files ready to use.
-
 # Usage
 The input of the program is the graph6 notation (http://users.cecs.anu.edu.au/~bdm/data/formats.txt) of 1 or more graphs. The .jar file: "injChromNumber.jar" can be used to get an overview in the form of a table for a large amount of graphs.
 An example, making use of plantri (https://users.cecs.anu.edu.au/~bdm/plantri/) to generate the input graphs:
