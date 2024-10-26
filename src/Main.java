@@ -20,27 +20,29 @@ public class Main {
         long threadUserTimeStart = threadBean.getCurrentThreadUserTime();
 
         //Used to check if there are filters on
-        Boolean filterInj = false;
-        Boolean filterDegr = false;
         Boolean filterColoring = false;
 
-        int injNumFilter = -1;
-        int maxDegrFilter = -1;
+        List<Tuple<Integer, Integer>> filtersList = new ArrayList<>();
 
         //Read input for filters if present (if there are not 4 input arguments, input is ignored)
-        if (args.length > 3){
-            if (Objects.equals(args[0], "-d")){
-                maxDegrFilter = Integer.parseInt(args[1]);
-                filterDegr = true;
+        if (Arrays.asList(args).contains("-f")){ //Only if filters are active
+            
+            if (Arrays.asList(args).contains("-c")){
+                filterColoring = true;
             }
-            if (Objects.equals(args[2], "-i")){
-                injNumFilter = Integer.parseInt(args[3]);
-                filterInj = true;
-            }
-            if (args.length > 4){
-                if (Objects.equals(args[4], "-c")){
-                    filterColoring = true;
+
+            System.out.println(Arrays.toString(args));
+
+            for (String arg: args) {
+                if (arg.equals("-f")) {
+                    continue;
                 }
+                if (arg.equals("-c")) {
+                    break; //If -c is found, we are done with the filters
+                }
+                System.out.println(arg);
+                String[] splitFilter = arg.split("-");
+                filtersList.add(new Tuple<>(Integer.parseInt(splitFilter[0]), Integer.parseInt(splitFilter[1])));
             }
         }
 
@@ -49,6 +51,9 @@ public class Main {
 
         //The table of the results
         HashMap<Tuple<Integer, Integer>, Integer> results = new HashMap<>();
+
+        //Printed results
+        HashMap<Tuple<Integer, Integer>, List<Tuple<String, BTA>>> printedResults = new HashMap<>();
 
         int maximumDegreeFound = -1;
         int maximumInjFound = -1;
@@ -73,7 +78,7 @@ public class Main {
                     int maxDeg = testBTA.getMaxDegree();
 
                     //Put the results in the results list and update max degree and inj
-                    Boolean added = false;
+                    boolean added = false;
                     for (Tuple<Integer, Integer> result : results.keySet()){
                         if (result.x == maxDeg && result.y == injNum){
                             results.put(result, results.get(result) + 1);
@@ -92,8 +97,24 @@ public class Main {
                         maximumInjFound = injNum;
                     }
 
-                    //Check if filters are up and we need to print the graph
-                    filter(filterColoring, filterDegr, filterInj, maxDegrFilter, maxDeg, injNumFilter, injNum, testBTA);
+                    for (Tuple<Integer, Integer> filter : filtersList){
+                        if (filter.x == maxDeg && filter.y <= injNum){
+                            boolean addedFilter = false;
+                            for (Tuple<Integer, Integer> printedResult: printedResults.keySet()){
+                                if (printedResult.x == maxDeg && printedResult.y == injNum){
+                                    printedResults.get(printedResult).add(new Tuple<>(testBTA.getGraph6Notation(), testBTA));
+                                    addedFilter = true;
+                                    break;
+                                }
+                            }
+                            if (!addedFilter){
+                                Tuple<Integer, Integer> newKey = new Tuple<>(maxDeg, injNum);
+                                printedResults.put(newKey, new ArrayList<>());
+                                printedResults.get(newKey).add(new Tuple<>(testBTA.getGraph6Notation(), testBTA));
+                            }
+                            break;
+                        }
+                    }
 
                     amountOfGraphs++; //Keeps track of how many graphs we look through
                 }
@@ -105,6 +126,9 @@ public class Main {
 
                     //Given the results, make a table ready to be printed
                     ArrayList<ArrayList<Integer>> table = makeTable(results, maximumDegreeFound, maximumInjFound);
+
+                    //Print filtered graphs
+                    printFilteredGraphs(printedResults, filterColoring);
 
                     //Report the found results
                     printResults(duration, amountOfGraphs, table);
@@ -166,15 +190,26 @@ public class Main {
     }
 
     /**
-     * Check if the filters are up and if we need to print the graph.
+    * Print the graphs that are filtered
      */
-    private static void filter(Boolean filterColoring, Boolean filterDegr, Boolean filterInj, int maxDegrFilter, int maxDeg, int injNumFilter, int result, BTA testBTA) {
-        if (filterDegr && filterInj) {
-            if (maxDegrFilter == maxDeg && injNumFilter == result){
-                System.out.println(testBTA.getGraph6Notation());
-                if (filterColoring){
-                    System.out.println(Arrays.toString(testBTA.getFinalColoring()));
+    private static void printFilteredGraphs(HashMap<Tuple<Integer, Integer>, List<Tuple<String, BTA>>> printedResults,  boolean filterColoring){
+        if (!printedResults.isEmpty()){
+            System.out.println("--------------------");
+        }
+        for (Tuple<Integer, Integer> filter : printedResults.keySet()){
+            if (filterColoring) {
+                System.out.println("Filter: max degree = " + filter.x + ", inj = " + filter.y);
+                for (Tuple<String, BTA> result : printedResults.get(filter)){
+                    System.out.println(result.x + "\t" + Arrays.toString(result.y.getFinalColoring()));
                 }
+                System.out.println("--------------------");
+            }
+            else {
+                System.out.println("Filter: max degree = " + filter.x + ", inj = " + filter.y);
+                for (Tuple<String, BTA> result : printedResults.get(filter)) {
+                    System.out.println(result.x);
+                }
+                System.out.println("--------------------");
             }
         }
     }
