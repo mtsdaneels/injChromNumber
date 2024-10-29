@@ -21,7 +21,9 @@ public class Main {
         //Used to check if there are filters on
         Boolean filterColoring = false;
 
-        List<Tuple<Integer, Integer>> filtersList = new ArrayList<>();
+        List<Tuple<Integer, Integer>> filtersListGE = new ArrayList<>();
+
+        List<Tuple<Integer, Integer>> filtersListE = new ArrayList<>();
 
         //Read input for filters if present (if there are not 4 input arguments, input is ignored)
         if (Arrays.asList(args).contains("-f")){ //Only if filters are active
@@ -37,8 +39,15 @@ public class Main {
                 if (arg.equals("-c")) {
                     break; //If -c is found, we are done with the filters
                 }
-                String[] splitFilter = arg.split("-");
-                filtersList.add(new Tuple<>(Integer.parseInt(splitFilter[0]), Integer.parseInt(splitFilter[1])));
+                if (arg.contains("=")) {
+                    arg = arg.replace("=", "");
+                    String[] splitFilter = arg.split("-");
+                    filtersListE.add(new Tuple<>(Integer.parseInt(splitFilter[0]), Integer.parseInt(splitFilter[1])));
+                }
+                else {
+                    String[] splitFilter = arg.split("-");
+                    filtersListGE.add(new Tuple<>(Integer.parseInt(splitFilter[0]), Integer.parseInt(splitFilter[1])));
+                }
             }
         }
 
@@ -93,7 +102,9 @@ public class Main {
                         maximumInjFound = injNum;
                     }
 
-                    for (Tuple<Integer, Integer> filter : filtersList){
+                    // For list of greater or equal than filters
+                    boolean addedPrint = false;
+                    for (Tuple<Integer, Integer> filter : filtersListGE){
                         if (filter.x == maxDeg && filter.y <= injNum){
                             boolean addedFilter = false;
                             for (Tuple<Integer, Integer> printedResult: printedResults.keySet()){
@@ -108,7 +119,30 @@ public class Main {
                                 printedResults.put(newKey, new ArrayList<>());
                                 printedResults.get(newKey).add(new Tuple<>(testBTA.getGraph6Notation(), testBTA));
                             }
+                            addedPrint = true;
                             break;
+                        }
+                    }
+
+                    // For list of equal than filters
+                    if (!addedPrint){
+                        for (Tuple<Integer, Integer> filter : filtersListE){
+                            if (filter.x == maxDeg && filter.y == injNum){
+                                boolean addedFilter = false;
+                                for (Tuple<Integer, Integer> printedResult: printedResults.keySet()){
+                                    if (printedResult.x == maxDeg && printedResult.y == injNum){
+                                        printedResults.get(printedResult).add(new Tuple<>(testBTA.getGraph6Notation(), testBTA));
+                                        addedFilter = true;
+                                        break;
+                                    }
+                                }
+                                if (!addedFilter){
+                                    Tuple<Integer, Integer> newKey = new Tuple<>(maxDeg, injNum);
+                                    printedResults.put(newKey, new ArrayList<>());
+                                    printedResults.get(newKey).add(new Tuple<>(testBTA.getGraph6Notation(), testBTA));
+                                }
+                                break;
+                            }
                         }
                     }
 
