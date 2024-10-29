@@ -4,7 +4,8 @@ This respository contains an algorithm to calculate the injective chromatic numb
 
 ## Installation
 
-This requires a working shell. On Windows an easy way to simulate this is by using Windows Subsystem for Linux (WSL).
+This requires a working shell and `make`. On Windows an easy way to simulate this is by using Windows Subsystem for Linux (WSL).
+Navigate to the root directory and compile using `make` to create `injChromNumber.jar`, which can then be run.
 
 # Usage
 The input of the program is the graph6 notation (http://users.cecs.anu.edu.au/~bdm/data/formats.txt) of 1 or more graphs. The .jar file: "injChromNumber.jar" can be used to get an overview in the form of a table for a large amount of graphs.
@@ -31,21 +32,20 @@ inj = 11:       0       0       0       0       0       0       1       70      
 inj = 12:       0       0       0       0       0       0       0       2       35      130     219     228
 ```
 
-There is a possibility to apply filters for the received graphs. This can be achieved by adding "-f D-I" with D the maximum degree of the graphs and I the injective chromatic number of the graphs. The filter -f 6-10 will print out all the graphs with maximum degree 6 and injective chromatic number greater than or equal to 10. Multiple filters can be added at the same time. An example to find the graphs with maximum degree 6 and injective chromatic number > 10 AND the graphs with maximum degree 7 and injective chromatic number > 11:
+There is a possibility to apply filters for the received graphs. This can be achieved by adding "-f D-I" with D the maximum degree of the graphs and I the injective chromatic number of the graphs. The filter -f 6-10 will print out all the graphs with maximum degree 6 and injective chromatic number greater than or equal to 10. When you only want the graphs with maximum degree 6 and injective chromatic number exactly 10, you can use -f 6-10=. Multiple filters can be added at the same time. An example to find the graphs with maximum degree 6 and injective chromatic number > 10 AND the graphs with maximum degree 7 and injective chromatic number = 11:
 
 ```
-./plantri -g 12 | java -jar injChromNumber.jar -f 6-11 7-12
+./plantri -g 12 | java -jar injChromNumber.jar -f 6-11 6-7=
 ./plantri -g 12
-7595 triangulations written to stdout; cpu=0.01 sec
+7595 triangulations written to stdout; cpu=0.02 sec
 --------------------
-Filter: max degree = 7, inj = 12
-K|fIIDP[G`B|
-K|tIID`GX_bz
+Filter: max degree = 6, inj = 7
+K|nmIDF?wA_N
 --------------------
 Filter: max degree = 6, inj = 11
 K|fIYDpCws_M
 --------------------
-Total time : 0.08 sec
+Total time : 0.13 sec
 Amount of graphs: 7595
 max degree:     0       1       2       3       4       5       6       7       8       9       10      11
 inj = 1:        0       0       0       0       0       0       0       0       0       0       0       0
