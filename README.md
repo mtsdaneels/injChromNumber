@@ -62,7 +62,7 @@ inj = 11:       0       0       0       0       0       0       1       70      
 inj = 12:       0       0       0       0       0       0       0       2       35      130     219     228
 ```
 
-To get the injective coloring of the graphs while using the least amount of colors for that graph, you can use -c after all the gilters. This prints an array with the colors used for the graphs that are printed. For example: 
+To get the injective coloring of the graphs while using the least amount of colors for that graph, you can use -c after all the filters. This prints an array with the colors used for the graphs that are printed. For example: 
 
  ```
 ./plantri -g 12 | java -jar injChromNumber.jar -f 6-11 7-12 -c
@@ -97,7 +97,7 @@ inj = 12:       0       0       0       0       0       0       0       2       
 The output is made such that only the graph6 notation of the graphs is output to stdout, meaning that it is possible to use pipes to another program. For example, if we want to know the chromatic number of the graphs from above, we can use countg (https://pallini.di.uniroma1.it/).
 
 ```
- ./plantri -g 12 | java -jar injChromNumber.jar -f 6-10 | ./countg --N
+./plantri -g 12 | java -jar injChromNumber.jar -f 6-10 | ./countg --N
 ./plantri -g 12
 >A ./countg --N
 7595 triangulations written to stdout; cpu=0.01 sec
